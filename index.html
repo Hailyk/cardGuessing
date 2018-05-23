@@ -22,24 +22,32 @@
             <div class="page-content">
               <div class="card-stack">
                 <!--card 1-->
-                <div class="demo-card-image cards mdl-card mdl-shadow--2dp" id="card1" v-on:click="card_click">
+                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{back:back, win:win, lose:lose}" id="card1" v-on:click="card_click">
                   <div class="mdl-card__title mdl-card--expand"></div>
-                  <span>{{debug_text}}</span>
+                  <div class="mdl-card__actions">
+                    <span>{{debug_text}}</span>
+                  </div>
                 </div>
                 <!--card 2-->
-                <div class="demo-card-image cards mdl-card mdl-shadow--2dp" id="card2" v-on:click="card_click">
+                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{back:back, win:win, lose:lose}" id="card2" v-on:click="card_click">
                   <div class="mdl-card__title mdl-card--expand"></div>
-                  <span>{{debug_text}}</span>
+                  <div class="mdl-card__actions">
+                    <span>{{debug_text}}</span>
+                  </div>
                 </div>
                 <!--card 3-->
-                <div class="demo-card-image cards mdl-card mdl-shadow--2dp" id="card3" v-on:click="card_click">
+                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{back:back, win:win, lose:lose}" id="card3" v-on:click="card_click">
                   <div class="mdl-card__title mdl-card--expand"></div>
-                  <span>{{debug_text}}</span>
+                  <div class="mdl-card__actions">
+                    <span>{{debug_text}}</span>
+                  </div>
                 </div>
                 <!--card 4-->
-                <div class="demo-card-image cards mdl-card mdl-shadow--2dp" id="card4" v-on:click="card_click">
+                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{back:back, win:win, lose:lose}" id="card4" v-on:click="card_click">
                   <div class="mdl-card__title mdl-card--expand"></div>
-                  <span>{{debug_text}}</span>
+                  <div class="mdl-card__actions">
+                    <span>{{debug_text}}</span>
+                  </div>
                 </div>
               </div>
             </div>
