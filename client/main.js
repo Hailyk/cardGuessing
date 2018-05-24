@@ -1,5 +1,44 @@
 'use strict';
 
+const socket = io(); //todo: fill in url
+
+
+socket.on("auth", (from, message)=>{
+    console.log(message+" from "+from);
+    localStorage.setItem('auth', message.key);
+});
+socket.on("credit", (from, message)=>{
+    console.log(message+" from "+from);
+});
+socket.on("choice", (from, message)=>{
+    console.log(message+" from "+from);
+    for(let i = 1;i<=4;i++){
+        let cardID = "card"+i;
+        if(i == message.CardWinner+1){
+            window[cardID].debugg_text = "win";
+            window[cardID].back = false;
+            window[cardID].lose = false;
+            window[cardID].win = true;
+        }
+        else{
+            window[cardID].debugg_text = "lose";
+            window[cardID].back = false;
+            window[cardID].lose = true;
+            window[cardID].win = false;
+        }
+    }
+    if(message.isWinner){
+        
+    }
+});
+
+let overlay = new Vue({
+    el:"#overlay",
+    data:{
+        active: false,
+        message:"",
+    },
+});
 
 let card_1 = new Vue({
     el:"#card1",
@@ -73,4 +112,24 @@ function gsetcredit(credit){
         return credit.data.credit;
     }
     credit.data.credit = credit;
+}
+
+// set overlay status
+// @arg status, boolean,
+function setOverlay(status){
+    if(typeof status == "boolean"){
+        overlay.data.active = status;
+    }
+    else{
+        throw new Error("Overlay status not a boolean");
+    }
+}
+
+function setOverlayText(text){
+    if(typeof text == "Text"){
+        overlay.data.active = text;
+    }
+    else{
+        throw new Error("OverlayText not words");
+    }
 }
