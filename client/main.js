@@ -10,6 +10,12 @@ socket.on("auth", (from, message)=>{
 });
 socket.on("credit", (from, message)=>{
     console.log(message+" from "+from);
+    if(typeof message.credit === "Number"){
+        gsetcredit(message.credit);
+    }
+    else{
+        throw new TypeError("Invalid event from server");
+    }
 });
 socket.on("choice", (from, message)=>{
     console.log(message+" from "+from);
@@ -29,7 +35,10 @@ socket.on("choice", (from, message)=>{
         }
     }
     if(message.isWinner){
-        
+        //todo: what to do if winner
+    }
+    else{
+        //todo: what to do if loser
     }
 });
 
@@ -37,7 +46,7 @@ let overlay = new Vue({
     el:"#overlay",
     data:{
         active: false,
-        message:"",
+        message:"test",
     },
     methods:{
         disable_overlay: ()=>{
@@ -122,9 +131,9 @@ function card_click_constructor(cardNumber){
 // @arg credit, number, amount of credit to display
 function gsetcredit(credit){
     if(credit == undefined){
-        return credit.data.credit;
+        return credit.credit;
     }
-    credit.data.credit = credit;
+    credit.credit = credit;
 }
 
 // set overlay status
@@ -140,7 +149,7 @@ function setOverlay(status){
 
 function setOverlayText(text){
     if(typeof text == "Text"){
-        overlay.data.active = text;
+        overlay.message = text;
     }
     else{
         throw new Error("OverlayText not words");

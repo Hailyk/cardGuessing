@@ -11,7 +11,9 @@
     <script defer type="text/javascript" src="./main.js"></script>
 </head>
 <body>
-<div id="overlay" v-bind:class="{overlay_active:active}" v-on:click="disable_overlay"></div>
+<div id="overlay" v-bind:class="{overlay_active:active}" v-on:click="disable_overlay">
+    <div id="overlay_text">{{message}}</div>
+</div>
 <div class="mdl-layout mdl-js-layout">
     <header class="mdl-layout__header mdl-layout__header--scroll">
         <div class="mdl-layout__header-row">
