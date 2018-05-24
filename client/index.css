@@ -1,8 +1,14 @@
 html, body{
     height: 100%;
 }
-.mdl-card{
+.mdl-card.back{
     background: url('./cardbacking.jpg') center / cover;
+}
+.mdl-card.win{
+    background: url('./cardWinner.jpg') center / cover;
+}
+.mdl-card.lose{
+    background: url('./cardLoser.jpg') center / cover;
 }
 .mdl-layout__content{
     height: calc(100% - 200px);
@@ -23,8 +29,9 @@ html, body{
     float: left;
     margin: 20px;
     height: 400px;
+    cursor: pointer;
 }
-.overlay_active{
+#overlay.overlay_active{
     display: block;
 }
 #overlay {

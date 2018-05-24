@@ -2,6 +2,7 @@
 
 const socket = io(); //todo: fill in url
 
+let cards = [];
 
 socket.on("auth", (from, message)=>{
     console.log(message+" from "+from);
@@ -12,19 +13,19 @@ socket.on("credit", (from, message)=>{
 });
 socket.on("choice", (from, message)=>{
     console.log(message+" from "+from);
-    for(let i = 1;i<=4;i++){
-        let cardID = "card"+i;
-        if(i == message.CardWinner+1){
-            window[cardID].debugg_text = "win";
-            window[cardID].back = false;
-            window[cardID].lose = false;
-            window[cardID].win = true;
+    for(let i = 0;i<4;i++){
+        let cardID = "card_"+i;
+        if(i === message.CardWinner+1){
+            cards[i].debugg_text = "win";
+            cards[i].back = false;
+            cards[i].lose = false;
+            cards[i].win = true;
         }
         else{
-            window[cardID].debugg_text = "lose";
-            window[cardID].back = false;
-            window[cardID].lose = true;
-            window[cardID].win = false;
+            cards[i].debugg_text = "lose";
+            cards[i].back = false;
+            cards[i].lose = true;
+            cards[i].win = false;
         }
     }
     if(message.isWinner){
@@ -38,9 +39,20 @@ let overlay = new Vue({
         active: false,
         message:"",
     },
+    methods:{
+        disable_overlay: ()=>{
+            for(let i = 0;i<4;i++) {
+                cards[i].debug_text = "back";
+                cards[i].back = true;
+                cards[i].lose = false;
+                cards[i].win = false;
+            }
+            setOverlay(false);
+        },
+    },
 });
 
-let card_1 = new Vue({
+cards[0] = new Vue({
     el:"#card1",
     data:{
         debug_text:"down",
@@ -53,7 +65,7 @@ let card_1 = new Vue({
     },
 });
 
-let card_2 = new Vue({
+cards[1] = new Vue({
     el:"#card2",
     data:{
         debug_text:"down",
@@ -66,7 +78,7 @@ let card_2 = new Vue({
     },
 });
 
-let card_3 = new Vue({
+cards[2] = new Vue({
     el:"#card3",
     data:{
         debug_text:"down",
@@ -79,7 +91,7 @@ let card_3 = new Vue({
     },
 });
 
-let card_4 = new Vue({
+cards[3] = new Vue({
     el:"#card4",
     data:{
         debug_text:"down",
@@ -101,6 +113,7 @@ let credit = new Vue({
 
 function card_click_constructor(cardNumber){
     return function(){
+        console.log(cardNumber+" clicked");
         //todo: what to do after selected card
     }
 }
@@ -118,7 +131,7 @@ function gsetcredit(credit){
 // @arg status, boolean,
 function setOverlay(status){
     if(typeof status == "boolean"){
-        overlay.data.active = status;
+        overlay.active = status;
     }
     else{
         throw new Error("Overlay status not a boolean");
