@@ -2,6 +2,8 @@
 
 const socket = io(); //todo: fill in url
 
+let ready = true;
+
 let cards = [];
 
 socket.on("auth", (from, message)=>{
@@ -10,7 +12,7 @@ socket.on("auth", (from, message)=>{
 });
 socket.on("credit", (from, message)=>{
     console.log(message+" from "+from);
-    if(typeof message.credit === "Number"){
+    if(typeof message.credit === "number"){
         gsetcredit(message.credit);
     }
     else{
@@ -20,7 +22,6 @@ socket.on("credit", (from, message)=>{
 socket.on("choice", (from, message)=>{
     console.log(message+" from "+from);
     for(let i = 0;i<4;i++){
-        let cardID = "card_"+i;
         if(i === message.CardWinner+1){
             cards[i].debugg_text = "win";
             cards[i].back = false;
@@ -35,11 +36,12 @@ socket.on("choice", (from, message)=>{
         }
     }
     if(message.isWinner){
-        //todo: what to do if winner
+        setOverlayText("Winner!");
     }
     else{
-        //todo: what to do if loser
+        setOverlayText("Better Luck Next Time");
     }
+    ready = true;
 });
 
 let overlay = new Vue({
@@ -50,13 +52,15 @@ let overlay = new Vue({
     },
     methods:{
         disable_overlay: ()=>{
-            for(let i = 0;i<4;i++) {
-                cards[i].debug_text = "back";
-                cards[i].back = true;
-                cards[i].lose = false;
-                cards[i].win = false;
+            if(ready === true) {
+                for (let i = 0; i < 4; i++) {
+                    cards[i].debug_text = "back";
+                    cards[i].back = true;
+                    cards[i].lose = false;
+                    cards[i].win = false;
+                }
+                setOverlay(false);
             }
-            setOverlay(false);
         },
     },
 });
@@ -68,6 +72,7 @@ cards[0] = new Vue({
         back:true,
         win: false,
         lose:false,
+        debug:false,
     },
     methods:{
         card_click: card_click_constructor(1),
@@ -81,6 +86,7 @@ cards[1] = new Vue({
         back:true,
         win: false,
         lose:false,
+        debug:false,
     },
     methods:{
         card_click: card_click_constructor(2),
@@ -94,6 +100,7 @@ cards[2] = new Vue({
         back:true,
         win: false,
         lose:false,
+        debug:false,
     },
     methods:{
         card_click: card_click_constructor(3),
@@ -107,6 +114,7 @@ cards[3] = new Vue({
         back:true,
         win: false,
         lose:false,
+        debug:false,
     },
     methods:{
         card_click: card_click_constructor(4),
@@ -123,7 +131,11 @@ let credit = new Vue({
 function card_click_constructor(cardNumber){
     return function(){
         console.log(cardNumber+" clicked");
-        //todo: what to do after selected card
+        if(ready === true){
+            ready = false;
+            setOverlay(true);
+
+        }
     }
 }
 
@@ -154,4 +166,28 @@ function setOverlayText(text){
     else{
         throw new Error("OverlayText not words");
     }
+}
+
+function setDebug(debug){
+    if(typeof debug === "boolean"){
+        for(let i=0;i<4;i++){
+            cards[i].debug = debug;
+        }
+    }
+    else{
+        throw new TypeError("Debug need to be boolean value");
+    }
+}
+
+function sendBet(bet,amount){
+    if(typeof bet === "number" && typeof amount === "number"){
+        socket.emit('choice', {bet:bet,amount:amount});
+    }
+    else{
+        throw new TypeError("sendBet arguments must be number");
+    }
+}
+
+function getCredit(){
+    socket.emit('credit');
 }

@@ -56,3 +56,9 @@ html, body{
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
 }
+.debug{
+    display: none;
+}
+.debug.debugActive{
+    display: block;
+}
