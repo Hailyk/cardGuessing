@@ -10,10 +10,10 @@ const uuid = require('uuid/v4');
 let users = [];
 
 function readFile(callback){
-    fs.readFile(JSON.parse(datafile), 'utf-8', function (error, data) {
+    fs.readFile(datafile, 'utf-8', function (error, data) {
         if (error) callback(error);
         else {
-            users = data;
+            users = JSON.parse(data);
             callback();
         }
     });
@@ -76,7 +76,7 @@ function findUser(socketId){
 
 function findUserByIdentifier(identifier) {
     for (let i = 0; i < users.length; i++) {
-        if (users[i].id === identifier.id) return i;
+        if (users[i].id === identifier) return i;
     }
     return -1;
 }
