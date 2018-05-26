@@ -15,7 +15,7 @@ app.use(express.static("../client"));
 
 io.on('connection', function(socket, callback){
   socket.on('new user', function(callback){
-    const indentifier = data.newUser();
+      const identifier = data.newUser();
     if (data.addSocketId(identifier, socket.id)) callback(identifier);
     else callback (null);
   });
@@ -62,8 +62,8 @@ app.get("/", function(req, res){
     });
 });
 
-var host = process.env.HOST || 'localhost';
-var port = process.env.PORT || '3000';
+let host = process.env.HOST || 'localhost';
+let port = process.env.PORT || '3000';
 server.listen(port, host, function () {
   console.log("Hosting webpage");
   setUpData();
