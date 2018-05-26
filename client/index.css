@@ -22,15 +22,19 @@ html, body{
 .card-stack{
     margin: 100px auto 0 auto;
     overflow: hidden;
-    width: 90%;
-    height:100%;
+
+    width: 1146.66666666px;
+    height: 100%;
 }
-.mdl-card.cards{
+
+.mdl-card.cards {
     float: left;
-    margin: 20px;
-    height: 75%;
-    width: 21.74%;
+    margin: 10px;
+    height: 400px;
+    width: 266.6666666px;
+
     cursor: pointer;
+    border-radius: 3%;
 }
 
 #overlay.overlay_active{
@@ -41,7 +45,7 @@ html, body{
     display: none;
     width: 100%;
     height: 100%;
-    top: 0; 
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;

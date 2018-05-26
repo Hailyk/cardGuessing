@@ -6,42 +6,14 @@ let ready = true;
 
 let cards = [];
 
-socket.on("auth", (from, message)=>{
-    console.log(message+" from "+from);
-    localStorage.setItem('auth', message.key);
+socket.on("identify", (identifier) => {
+    localStorage.setItem('auth', identifier.key);
 });
-socket.on("credit", (from, message)=>{
-    console.log(message+" from "+from);
-    if(typeof message.credit === "number"){
-        gsetcredit(message.credit);
-    }
-    else{
-        throw new TypeError("Invalid event from server");
-    }
+socket.on("credit", (balance) => {
+    onCredit(balance);
 });
-socket.on("choice", (from, message)=>{
-    console.log(message+" from "+from);
-    for(let i = 0;i<4;i++){
-        if(i === message.CardWinner+1){
-            cards[i].debugg_text = "win";
-            cards[i].back = false;
-            cards[i].lose = false;
-            cards[i].win = true;
-        }
-        else{
-            cards[i].debugg_text = "lose";
-            cards[i].back = false;
-            cards[i].lose = true;
-            cards[i].win = false;
-        }
-    }
-    if(message.isWinner){
-        setOverlayText("Winner!");
-    }
-    else{
-        setOverlayText("Better Luck Next Time");
-    }
-    ready = true;
+socket.on("choice", (data) => {
+    onBet(data);
 });
 
 let overlay = new Vue({
@@ -128,13 +100,15 @@ let credit = new Vue({
     },
 });
 
+identify();
+
 function card_click_constructor(cardNumber){
     return function(){
         console.log(cardNumber+" clicked");
         if(ready === true){
             ready = false;
             setOverlay(true);
-
+            sendBet(cardNumber, 1);
         }
     }
 }
@@ -142,7 +116,7 @@ function card_click_constructor(cardNumber){
 // set or get how much credit is left, display only, unsecured
 // @arg credit, number, amount of credit to display
 function gsetcredit(credit){
-    if(credit == undefined){
+    if (credit === undefined) {
         return credit.credit;
     }
     credit.credit = credit;
@@ -151,7 +125,7 @@ function gsetcredit(credit){
 // set overlay status
 // @arg status, boolean,
 function setOverlay(status){
-    if(typeof status == "boolean"){
+    if (typeof status === "boolean") {
         overlay.active = status;
     }
     else{
@@ -160,7 +134,7 @@ function setOverlay(status){
 }
 
 function setOverlayText(text){
-    if(typeof text == "Text"){
+    if (typeof text === "string") {
         overlay.message = text;
     }
     else{
@@ -181,13 +155,71 @@ function setDebug(debug){
 
 function sendBet(guess,betAmount){
     if(typeof bet === "number" && typeof amount === "number"){
-        socket.emit('choice', {bet:bet,amount:amount});
+        socket.emit('choice', bet, amount, onBet);
     }
     else{
         throw new TypeError("sendBet arguments must be number");
     }
 }
 
+function onBet(result) {
+    for (let i = 0; i < 4; i++) {
+        if (i === result.winnerCard + 1) {
+            cards[i].debugg_text = "win";
+            cards[i].back = false;
+            cards[i].lose = false;
+            cards[i].win = true;
+        }
+        else {
+            cards[i].debugg_text = "lose";
+            cards[i].back = false;
+            cards[i].lose = true;
+            cards[i].win = false;
+        }
+    }
+    if (result.isWinner) {
+        setOverlayText("Winner!");
+    }
+    else {
+        setOverlayText("Better Luck Next Time");
+    }
+    ready = true;
+}
+
 function getCredit(){
-    socket.emit('credit');
+    socket.emit('credit', onCredit);
+}
+
+function onCredit(balance) {
+    if (typeof balance === "number") {
+        gsetcredit(balance);
+    }
+    else {
+        throw new TypeError("Invalid event from server");
+    }
+}
+
+function identify() {
+    const key = getKey();
+    console.log(key);
+    if (key) {
+        console.log("new user");
+        socket.emit('new user', function (identifier) {
+            console.log(identifier);
+            setKey(identifier)
+        });
+    }
+    else {
+        socket.emit('identify', key, function (identifier) {
+            setKey(identifier);
+        });
+    }
+}
+
+function setKey(id) {
+    localStorage.setItem('id', id);
+}
+
+function getKey() {
+    return localStorage.getItem("id");
 }
