@@ -179,7 +179,7 @@ function setDebug(debug){
     }
 }
 
-function sendBet(bet,amount){
+function sendBet(guess,betAmount){
     if(typeof bet === "number" && typeof amount === "number"){
         socket.emit('choice', {bet:bet,amount:amount});
     }

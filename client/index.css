@@ -23,14 +23,16 @@ html, body{
     margin: 100px auto 0 auto;
     overflow: hidden;
     width: 90%;
-    min-width: 1480px;
+    height:100%;
 }
-.cards{
+.mdl-card.cards{
     float: left;
     margin: 20px;
-    height: 400px;
+    height: 75%;
+    width: 21.74%;
     cursor: pointer;
 }
+
 #overlay.overlay_active{
     display: block;
 }
