@@ -11,19 +11,53 @@
     <script defer type="text/javascript" src="./main.js"></script>
 </head>
 <body>
-<div id="overlay" v-bind:class="{overlay_active:active}" v-on:click="disable_overlay">
-    <div id="overlay_text">{{message}}</div>
+<div id="overlay" class = "overlay" v-bind:class="{overlay_active:active}" v-on:click="disable_overlay">
+    <div id="overlay_text" class = "overlay_interior">
+      <img v-bind:src="img"/>
+      <p>Click anywhere to continue</p>
+    </div>
 </div>
+
+<div id="overlay_bet" class = "overlay" v-bind:class="{overlay_active:active}">
+    <div id="bet_text" class = "overlay_interior">
+        <p id="bet_instructions">{{message}}</p>
+        <br>
+        <input id="bet" placeholder="1 to 1000" class="input"/>
+        <div id="make_bet" class = "button" v-on:click="disable_overlay">Go!</div>
+    </div>
+
+</div>
+
+<div id="instructions_overlay" class = "overlay" v-bind:class="{overlay_active:active}">
+    <div id="instructions" class = "overlay_interior">One out of the four cards shown is the winner.
+       First, choose which one you think is the winner.
+       Then, you will be prompted to make a bet ($1 to $1000).
+       If your guess is correct, you win twice the amount of the bet. Otherwise, you lose however much you bet.
+       <br><br><div id="close" class = "button" v-on:click="disable_overlay">OK</div>
+    </div>
+</div>
+
+<div id="overlay_login" class = "overlay" v-bind:class="{overlay_active:active}">
+    <div id="login_info" class = "overlay_interior">
+      <p id="login_intructions">{{message}}</p>
+      <input id="stu_num" placeholder="Number" class="input"/>
+      <br><input id="stu_id" placeholder = "Student ID" class="input"/>
+      <div id="login" class = "button" v-on:click="submit_login">{{button}}</div>
+    </div>
+
+</div>
+
 <div class="mdl-layout mdl-js-layout">
     <header class="mdl-layout__header mdl-layout__header--scroll">
         <div class="mdl-layout__header-row">
             <span class="mdl-layout-title">Game</span>
             <div class="mdl-layout-spacer"></div>
-            <div id="credit"><p>{{credit}}</p></div>
+            <div id="credit"><p>Credit: {{credit}}</p></div>
         </div>
     </header>
     <main class="mdl-layout__content">
         <div class="page-content">
+            <div id="logged_in" v-on:click="logout">{{message}}</div>
             <div class="card-stack">
                 <!--card 1-->
                 <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{back:back, win:win, lose:lose}" id="card1" v-on:click="card_click">

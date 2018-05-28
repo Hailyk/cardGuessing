@@ -20,7 +20,8 @@ let overlay = new Vue({
     el:"#overlay",
     data:{
         active: false,
-        message:"test",
+        message:"Test",
+        img: "",
     },
     methods:{
         disable_overlay: ()=>{
@@ -31,10 +32,115 @@ let overlay = new Vue({
                     cards[i].lose = false;
                     cards[i].win = false;
                 }
+                overlay.img = "";
                 setOverlay(false);
             }
         },
     },
+});
+
+let instructions_overlay = new Vue({
+    el:"#instructions_overlay",
+    data:{
+        active: false,
+    },
+    methods:{
+        disable_overlay: ()=>{
+            instructions_overlay.active = false;
+        },
+    },
+});
+
+let overlay_bet = new Vue({
+    el:"#overlay_bet",
+    data:{
+        active: false,
+        message: "How much do you want to bet your card is the winner? ($1 to $1000)",
+        cardClicked: 0,
+    },
+    methods:{
+        disable_overlay: ()=>{
+            let betAmount = parseFloat(document.getElementById('bet').value);
+            if (isNaN(betAmount) || betAmount < 1 || betAmount > 1000){
+              document.getElementById('bet').value = "";
+                overlay_bet.message = "You didn't put in a bet between $1 and $1000!";
+            }
+            else{
+              overlay_bet.active = false;
+              overlay_bet.message = "How much do you want to bet your card is the winner? ($1 to $1000)";
+              sendBet(overlay_bet.cardClicked, betAmount);
+            }
+
+        },
+    },
+});
+
+let overlay_login = new Vue({
+    el:"#overlay_login",
+    data:{
+        active: true,
+        message: "Log in using your number from Petersen's attendance sheet and your student id.",
+        button: "Submit",
+    },
+    methods:{
+      submit_login: ()=>{
+        overlay_login.button = "Verifying...";
+        let number = parseInt(document.getElementById("stu_num").value);
+        let studentId = parseInt(document.getElementById("stu_id").value);
+        if (isNaN(number)|| isNaN(studentId)){
+          overlay_login.button = "Submit";
+          overlay_login.message = "You failed to input numbers for at least one of the two fields."
+
+          document.getElementById("stu_num").value = "";
+          document.getElementById("stu_id").value = "";
+        }
+        else{
+          socket.emit("auth", number, studentId, (identifier, name)=>{
+            console.log(identifier);
+            if (!identifier){
+              overlay_login.button = "Submit";
+              overlay_login.message = "Incorrect number or student ID."
+
+              document.getElementById("stu_num").value = "";
+              document.getElementById("stu_id").value = "";
+            }
+            else{
+              setKey(identifier);
+              overlay_login.active = false;
+              logged_in.message = "Logged in as " + name + ". Click here to log out.";
+
+              socket.emit("credit", (balance)=>{
+                  gsetcredit(balance);
+                  document.getElementById("stu_num").value = "";
+                  document.getElementById("stu_id").value = "";
+
+                  instructions_overlay.active = true;
+              });
+            }
+
+          })
+        }
+      },
+    },
+});
+
+let logged_in = new Vue({
+  el:"#logged_in",
+  data: {
+    message: "Not logged in.",
+  },
+  methods:{
+    logout: ()=>{
+      socket.emit("log out", ()=>{
+        setKey(null);
+        overlay_login.active = true;
+        logged_in.message = "Not logged in.";
+        overlay_login.message = "Log in using your number from Petersen's attendance sheet and your student id.";
+        overlay_login.button = "Submit";
+        credit.credit = 0;
+      });
+    },
+  }
 });
 
 cards[0] = new Vue({
@@ -47,7 +153,7 @@ cards[0] = new Vue({
         debug:false,
     },
     methods:{
-        card_click: card_click_constructor(1),
+        card_click: card_click_constructor(0),
     },
 });
 
@@ -61,7 +167,7 @@ cards[1] = new Vue({
         debug:false,
     },
     methods:{
-        card_click: card_click_constructor(2),
+        card_click: card_click_constructor(1),
     },
 });
 
@@ -75,7 +181,7 @@ cards[2] = new Vue({
         debug:false,
     },
     methods:{
-        card_click: card_click_constructor(3),
+        card_click: card_click_constructor(2),
     },
 });
 
@@ -89,7 +195,7 @@ cards[3] = new Vue({
         debug:false,
     },
     methods:{
-        card_click: card_click_constructor(4),
+        card_click: card_click_constructor(3),
     },
 });
 
@@ -103,23 +209,23 @@ let credit = new Vue({
 identify();
 
 function card_click_constructor(cardNumber){
-    return function(){
+    return ()=>{
         console.log(cardNumber+" clicked");
         if(ready === true){
             ready = false;
-            setOverlay(true);
-            sendBet(cardNumber, 1);
+            overlay_bet.cardClicked = cardNumber;
+            overlay_bet.active = true;
         }
     }
 }
 
 // set or get how much credit is left, display only, unsecured
 // @arg credit, number, amount of credit to display
-function gsetcredit(credit){
-    if (credit === undefined) {
+function gsetcredit(balance){
+    if (balance === undefined) {
         return credit.credit;
     }
-    credit.credit = credit;
+    credit.credit = balance;
 }
 
 // set overlay status
@@ -142,6 +248,11 @@ function setOverlayText(text){
     }
 }
 
+function setOverlayImage(winner){
+  if (winner) overlay.img = "youwin.png";
+  else overlay.img = "youlose.png";
+}
+
 function setDebug(debug){
     if(typeof debug === "boolean"){
         for(let i=0;i<4;i++){
@@ -154,8 +265,9 @@ function setDebug(debug){
 }
 
 function sendBet(guess,betAmount){
-    if(typeof bet === "number" && typeof amount === "number"){
-        socket.emit('choice', bet, amount, onBet);
+    setOverlay(true);
+    if(typeof guess === "number" && typeof betAmount === "number"){
+        socket.emit('choice', guess, betAmount, onBet);
     }
     else{
         throw new TypeError("sendBet arguments must be number");
@@ -164,7 +276,7 @@ function sendBet(guess,betAmount){
 
 function onBet(result) {
     for (let i = 0; i < 4; i++) {
-        if (i === result.winnerCard + 1) {
+        if (i === result.winnerCard) {
             cards[i].debugg_text = "win";
             cards[i].back = false;
             cards[i].lose = false;
@@ -179,10 +291,15 @@ function onBet(result) {
     }
     if (result.isWinner) {
         setOverlayText("Winner!");
+        setOverlayImage(true);
     }
     else {
         setOverlayText("Better Luck Next Time");
+        setOverlayImage(false);
     }
+    socket.emit('credit', function(balance){
+      gsetcredit(balance);
+    });
     ready = true;
 }
 
@@ -203,16 +320,18 @@ function identify() {
     const key = getKey();
     console.log(key);
     if (key) {
-        console.log("new user");
-        socket.emit('new user', function (identifier) {
-            console.log(identifier);
-            setKey(identifier)
-        });
-    }
-    else {
-        socket.emit('identify', key, function (identifier) {
-            setKey(identifier);
-        });
+      socket.emit('identify', key, function (name) {
+        if (name){
+          socket.emit("credit", (balance)=>{
+              gsetcredit(balance);
+              overlay_login.active = false;
+              logged_in.message = "Logged in as " + name + ". Click here to log out.";
+              instructions_overlay.active = true;
+          });
+
+        }
+
+      });
     }
 }
 

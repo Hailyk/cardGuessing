@@ -20,7 +20,7 @@ function readFile(callback){
 }
 
 function updateFile(callback){
-    fs.writeFile(JSON.stringify(datafile), users, 'utf-8', function (error) {
+    fs.writeFile(datafile, JSON.stringify(users), 'utf-8', function (error) {
         callback(error);
     });
 }
@@ -33,12 +33,19 @@ function generateIdentifier(){
     return id;
 }
 
-function newUser(){
+function newUser(num, studentId, name){
+    const i = findUserByInfo(num, studentId);
+    if (i > -1){
+      return users[i].id;
+    }
     const id = generateIdentifier();
     users.push({
+        num: num,
+        studentId: studentId,
+        name: name,
         id: id,
         socketId: null,
-        balance: 10,
+        balance: 50,
         wins: 0,
     });
     return id;
@@ -59,13 +66,18 @@ function incrementWins(socketId){
     users[i].wins++;
 }
 
-function addSocketId(identifier, socketId, callback){
+function addSocketId(identifier, socketId){
     const i = findUserByIdentifier(identifier);
-    if (i === -1) return false;
+    if (i === -1) return null;
     else {
         users[i].socketId = socketId;
-        return true;
+        return users[i].name;
     }
+}
+
+function removeSocketId(socketId){
+  const i = findUser(socketId);
+  users[i].socketId = null;
 }
 
 function findUser(socketId){
@@ -81,6 +93,13 @@ function findUserByIdentifier(identifier) {
     return -1;
 }
 
+function findUserByInfo(num, id){
+  for (let i = 0; i < users.length; i++){
+    if (users[i].studentId == id && users[i].num == num) return i;
+  }
+  return -1;
+}
+
 exports.newUser = newUser;
 exports.updateBalance = updateBalance;
 exports.incrementWins = incrementWins;
@@ -88,3 +107,4 @@ exports.addSocketId = addSocketId;
 exports.updateFile = updateFile;
 exports.getBalance = getBalance;
 exports.readFile = readFile;
+exports.removeSocketId = removeSocketId;
