@@ -6,6 +6,7 @@ let ready = true;
 
 let cards = [];
 
+
 socket.on("identify", (identifier) => {
     localStorage.setItem('auth', identifier.key);
 });
@@ -109,7 +110,7 @@ let overlay_login = new Vue({
               overlay_login.active = false;
               logged_in.message = "Logged in as " + name + ". Click here to log out.";
 
-              socket.emit("credit", (balance)=>{
+              socket.emit("credit", getKey(), (balance)=>{
                   gsetcredit(balance);
                   document.getElementById("stu_num").value = "";
                   document.getElementById("stu_id").value = "";
@@ -131,14 +132,12 @@ let logged_in = new Vue({
   },
   methods:{
     logout: ()=>{
-      socket.emit("log out", ()=>{
         setKey(null);
         overlay_login.active = true;
         logged_in.message = "Not logged in.";
         overlay_login.message = "Log in using your number from Petersen's attendance sheet and your student id.";
         overlay_login.button = "Submit";
         credit.credit = 0;
-      });
     },
   }
 });
@@ -267,7 +266,7 @@ function setDebug(debug){
 function sendBet(guess,betAmount){
     setOverlay(true);
     if(typeof guess === "number" && typeof betAmount === "number"){
-        socket.emit('choice', guess, betAmount, onBet);
+        socket.emit('choice', getKey(), guess, betAmount, onBet);
     }
     else{
         throw new TypeError("sendBet arguments must be number");
@@ -297,14 +296,14 @@ function onBet(result) {
         setOverlayText("Better Luck Next Time");
         setOverlayImage(false);
     }
-    socket.emit('credit', function(balance){
+    socket.emit('credit', getKey(), function(balance){
       gsetcredit(balance);
     });
     ready = true;
 }
 
 function getCredit(){
-    socket.emit('credit', onCredit);
+    socket.emit('credit', getKey(), onCredit);
 }
 
 function onCredit(balance) {
@@ -322,7 +321,7 @@ function identify() {
     if (key) {
       socket.emit('identify', key, function (name) {
         if (name){
-          socket.emit("credit", (balance)=>{
+          socket.emit("credit", key, (balance)=>{
               gsetcredit(balance);
               overlay_login.active = false;
               logged_in.message = "Logged in as " + name + ". Click here to log out.";

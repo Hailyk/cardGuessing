@@ -13,39 +13,48 @@ const server = http.createServer(app);
 const io = socket.listen(server);
 
 app.use(express.static(__dirname + "/../client"));
+app.use(express.static(__dirname + "/../client/adminPanel"));
 
-io.on('connection', function(socket){
-  socket.on('auth', function(num, id, callback){
+io.on('connection', (socket)=>{
+  socket.on('auth', (num, id, callback)=>{
     const name = auth.auth(num, id)
     if(name){
       const identifier = data.newUser(num, id, name);
-      if (data.addSocketId(identifier, socket.id)) callback(identifier, name);
+      if (data.identify(identifier, socket.id)) callback(identifier, name);
       else callback (null);
     }
     else callback (null);
   });
-  socket.on('identify', function(identifier, callback){
-    const name = data.addSocketId(identifier, socket.id);
+  socket.on('identify', (identifier, callback)=>{
+    const name = data.identify(identifier, socket.id);
     callback(name);
   });
+  
+  socket.on('get data', ()=>{
+    updateAdmin();
+  });
 
-  socket.on("log out", function(callback){
-    data.removeSocketId(socket.id);
-    callback();
+  socket.on('credit', (id, callback)=>{
+    callback(data.getBalance(id));
   });
-  socket.on('credit', function(callback){
-    callback(data.getBalance(socket.id));
-  });
-  socket.on('choice', function(guess, betAmount, callback){
+  
+  socket.on('choice', (id, guess, betAmount, callback)=>{
     const winner = Math.floor(Math.random()*4);
+    data.incrementClicks(id, guess, (guess == winner) );
     if (guess == winner){
-      data.updateBalance(socket.id, data.getBalance(socket.id)+betAmount*2);
-      data.incrementWins(socket.id);
+      data.updateBalance(id, data.getBalance(id)+betAmount*2);
+      data.incrementWins(id);
     }
-    else data.updateBalance(socket.id, data.getBalance(socket.id)-betAmount);
+    else data.updateBalance(id, data.getBalance(id)-betAmount);
+    console.log("About to send data");
+    updateAdmin();
     callback({winnerCard:winner, isWinner: (guess == winner)});
   });
 });
+
+function updateAdmin(){
+  io.emit('send data', data.getData());
+}
 
 function setUpData(){
   data.readFile((error)=>{
@@ -64,8 +73,19 @@ function setUpData(){
   });
 }
 
-app.get("/", function(req, res){
+app.get("/", (req, res)=>{
   fs.readFile(path.resolve(path.join(__dirname,'../client/index.html')),function(err, html){
+        if(err) res.end(err);
+        else{
+            res.writeHeader(200, {"Content-Type": "text/html"});
+            res.write(html);
+            res.end();
+        }
+    });
+});
+
+app.get('/adminpanel', (req,res)=>{
+  fs.readFile(path.resolve(path.join(__dirname,'../client/adminPanel/adminPanel.html')),function(err, html){
         if(err) res.end(err);
         else{
             res.writeHeader(200, {"Content-Type": "text/html"});

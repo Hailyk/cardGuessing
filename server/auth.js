@@ -20,7 +20,7 @@ function readFile(callback){
 }
 
 function auth(num, id){
-  for (var i = 0; i < students.length; i++){
+  for (let i = 0; i < students.length; i++){
     if (students[i].id ==id &&students[i].number == num)return students[i].name;
   }
   return null;

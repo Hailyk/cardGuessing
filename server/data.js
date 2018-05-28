@@ -27,7 +27,7 @@ function updateFile(callback){
 
 function generateIdentifier(){
     let id = uuid();
-    while (findUserByIdentifier(id) !== -1) {
+    while (findUser(id) !== -1) {
         id = uuid();
     }
     return id;
@@ -44,53 +44,48 @@ function newUser(num, studentId, name){
         studentId: studentId,
         name: name,
         id: id,
-        socketId: null,
         balance: 50,
         wins: 0,
+        clicks: [0,0,0,0],
+        clickwins: [0,0,0,0]
     });
     return id;
 }
 
-function updateBalance(socketId, newBalance){
-    const i = findUser(socketId);
+function updateBalance(id, newBalance){
+    const i = findUser(id);
     if (i == -1) return null;
     users[i].balance = newBalance;
 }
 
-function getBalance(socketId){
-    const i = findUser(socketId);
+function getBalance(id){
+    const i = findUser(id);
     if (i == -1) return null;
     return users[i].balance;
 }
 
-function incrementWins(socketId){
-    const i = findUser(socketId);
+function incrementWins(id){
+    const i = findUser(id);
     if (i == -1) return null;
     users[i].wins++;
 }
 
-function addSocketId(identifier, socketId){
-    const i = findUserByIdentifier(identifier);
+function identify(identifier, socketId){
+    const i = findUser(identifier);
     if (i === -1) return null;
     else {
-        users[i].socketId = socketId;
         return users[i].name;
     }
 }
 
-function removeSocketId(socketId){
-  const i = findUser(socketId);
-  if (i == -1) return null;
-  users[i].socketId = null;
+function incrementClicks(id, card, winner){
+    const i = findUser(id);
+    if (i == -1 || card < 0 || card > 3) return;
+    users[i].clicks[card]++;
+    if (winner) users[i].clickwins[card]++;
 }
 
-function findUser(socketId){
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].socketId === socketId) return i;
-    }
-}
-
-function findUserByIdentifier(identifier) {
+function findUser(identifier) {
     for (let i = 0; i < users.length; i++) {
         if (users[i].id === identifier) return i;
     }
@@ -104,11 +99,16 @@ function findUserByInfo(num, id){
   return -1;
 }
 
+function getData(){
+    return users;
+}
+
 exports.newUser = newUser;
 exports.updateBalance = updateBalance;
 exports.incrementWins = incrementWins;
-exports.addSocketId = addSocketId;
 exports.updateFile = updateFile;
 exports.getBalance = getBalance;
 exports.readFile = readFile;
-exports.removeSocketId = removeSocketId;
+exports.identify = identify;
+exports.incrementClicks = incrementClicks;
+exports.getData = getData;
