@@ -75,7 +75,7 @@ app.get("/", function(req, res){
     });
 });
 
-let host = process.env.HOST || 'localhost';
+let host = process.env.IP || 'localhost';
 let port = process.env.PORT || '3000';
 server.listen(port, host, function () {
   console.log("Hosting webpage");
