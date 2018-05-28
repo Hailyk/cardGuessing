@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const socket = require('socket.io');
 const data = require('./data.js');
+const auth = require('./auth.js');
 const fs = require("fs");
 const path = require("path");
 
@@ -11,20 +12,29 @@ const server = http.createServer(app);
 
 const io = socket.listen(server);
 
-app.use(express.static("../client"));
+app.use(express.static(__dirname + "/../client"));
 
-io.on('connection', function(socket, callback){
-  socket.on('new user', function(callback){
-      const identifier = data.newUser();
-    if (data.addSocketId(identifier, socket.id)) callback(identifier);
+io.on('connection', function(socket){
+  socket.on('auth', function(num, id, callback){
+    const name = auth.auth(num, id)
+    if(name){
+      const identifier = data.newUser(num, id, name);
+      if (data.addSocketId(identifier, socket.id)) callback(identifier, name);
+      else callback (null);
+    }
     else callback (null);
   });
   socket.on('identify', function(identifier, callback){
-    if (data.addSocketId(identifier, socket.id)) callback(identifier);
-    else callback (null);
+    const name = data.addSocketId(identifier, socket.id);
+    callback(name);
+  });
+
+  socket.on("log out", function(callback){
+    data.removeSocketId(socket.id);
+    callback();
   });
   socket.on('credit', function(callback){
-    callback(data.getBalance());
+    callback(data.getBalance(socket.id));
   });
   socket.on('choice', function(guess, betAmount, callback){
     const winner = Math.floor(Math.random()*4);
@@ -44,10 +54,13 @@ function setUpData(){
       console.log("read file");
       setInterval(()=>{
         data.updateFile(()=>{
-          console.dir(error);
+          if (error) console.dir(error);
         });
       },60000);
     }
+    auth.readFile((error)=>{
+      if (error) console.dir(error);
+    });
   });
 }
 
