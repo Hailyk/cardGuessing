@@ -17,7 +17,8 @@
         <div class="mdl-card__supporting-text">
             <div>
                 <h5>credit</h5>
-                <p>{{user.balance}}</p>
+                <input v-model="user.balance" style="width:50px;"></input>
+                <button v-on:click="set(user.id,user.balance)" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Set</button>
                 <h5>wins</h5>
                 <p>{{user.wins}}</p>
                 <h5>click</h5>
@@ -42,7 +43,8 @@
             <div id="data_area">
                 <cell v-for='user in users'
                 v-bind:user = 'user'
-                v-bind:key='user.id'
+                v-bind:key = 'user.studentId'
+                v-bind:id='user.id'
                 v-bind:balance = 'user.balance'
                 v-bind:wins = 'user.wins'
                 v-bind:clicks = 'user.clicks'

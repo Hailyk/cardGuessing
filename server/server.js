@@ -49,6 +49,13 @@ io.on('connection', (socket)=>{
     updateAdmin();
     callback({winnerCard:winner, isWinner: (guess == winner)});
   });
+  socket.on('set credit',(id,credit)=>{
+    if(typeof credit !== 'number'){
+      credit = parseInt(credit);
+    }
+    data.updateBalance(id,credit);
+    updateAdmin();
+  })
 });
 
 function updateAdmin(){
@@ -64,7 +71,7 @@ function setUpData(){
         data.updateFile(()=>{
           if (error) console.dir(error);
         });
-      },60000);
+      },8000);
     }
     auth.readFile((error)=>{
       if (error) console.dir(error);
