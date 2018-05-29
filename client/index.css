@@ -1,14 +1,23 @@
 html, body{
     height: 100%;
 }
-.mdl-card.back{
-    background: url('./cardbacking.jpg') center / cover;
+.mdl-card.backjiahao{
+    background: url('./assets/card  with Jiahao.png') center / cover;
+}
+.mdl-card.backtwiness{
+    background: url('./assets/card  with twiness.png') center / cover;
+}
+.mdl-card.backnaomi{
+    background: url('./assets/card  with naomi.png') center / cover;
+}
+.mdl-card.backjonathan{
+    background: url('./assets/card  with Jonathan.png') center / cover;
 }
 .mdl-card.win{
-    background: url('./cardWinner.jpg') center / cover;
+    background: url('./assets/card  with happy peterson win.png') center / cover;
 }
 .mdl-card.lose{
-    background: url('./cardLoser.jpg') center / cover;
+    background: url('./assets/card  with sad peterson lose.png') center / cover;
 }
 .mdl-layout__content{
     height: calc(100% - 100px);
