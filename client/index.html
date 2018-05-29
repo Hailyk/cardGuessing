@@ -47,12 +47,12 @@
         <div class="mdl-layout__header-row">
             <span class="mdl-layout-title">Game</span>
             <div class="mdl-layout-spacer"></div>
+            <div id="logged_in" v-on:click="logout">{{message}}</div>
             <div id="credit"><p>Credit: {{credit}}</p></div>
         </div>
     </header>
     <main class="mdl-layout__content">
         <div class="page-content">
-            <div id="logged_in" v-on:click="logout">{{message}}</div>
             <div class="card-stack">
                 <!--card 1-->
                 <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{backnaomi:back, win:win, lose:lose, selected_shadow:chosen}" id="card1" v-on:click="card_click">
