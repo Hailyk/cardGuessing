@@ -49,6 +49,9 @@ html, body{
 .overlay.overlay_active{
     display: block;
 }
+#overlay{
+  background-color: rgba(0,0,0,0);
+}
 .overlay{
     position: fixed;
     display: none;

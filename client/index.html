@@ -11,12 +11,7 @@
     <script defer type="text/javascript" src="./main.js"></script>
 </head>
 <body>
-<div id="overlay" class = "overlay" v-bind:class="{overlay_active:active}" v-on:click="disable_overlay">
-    <div id="overlay_text" class = "overlay_interior">
-      <img v-bind:src="img"/>
-      <p>Click anywhere to continue</p>
-    </div>
-</div>
+<div id="overlay" class = "overlay" v-bind:class="{overlay_active:active}" v-on:click="disable_overlay"></div>
 
 <div id="overlay_bet" class = "overlay" v-bind:class="{overlay_active:active}">
     <div id="bet_text" class = "overlay_interior">

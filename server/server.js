@@ -46,7 +46,6 @@ io.on('connection', (socket)=>{
       data.incrementWins(id);
     }
     else data.updateBalance(id, data.getBalance(id)-betAmount);
-    console.log("About to send data");
     updateAdmin();
     callback({winnerCard:winner, isWinner: (guess == winner)});
   });
