@@ -213,6 +213,14 @@ let credit = new Vue({
     },
 });
 
+function showLowCredit(){
+    document.getElementById('toast-low-credit').MaterialSnackbar.showSnackbar({message:"Not enough credit, please purchase more."});
+}
+
+function toastMessage(message){
+    document.getElementById('toast-low-credit').MaterialSnackbar.showSnackbar({message:message});
+}
+
 identify();
 
 function card_click_constructor(cardNumber){
@@ -273,37 +281,47 @@ function setDebug(debug){
 }
 
 function sendBet(guess,betAmount){
-    setOverlay(true);
-    if(typeof guess === "number" && typeof betAmount === "number"){
-        socket.emit('choice', getKey(), guess, betAmount, onBet);
+    if(getCredit() - betAmount < 0){
+        showLowCredit();
     }
     else{
-        throw new TypeError("sendBet arguments must be number");
+        setOverlay(true);
+        if(typeof guess === "number" && typeof betAmount === "number"){
+            socket.emit('choice', getKey(), guess, betAmount, onBet);
+        }
+        else{
+            throw new TypeError("sendBet arguments must be number");
+        }
     }
 }
 
 function onBet(result) {
-    for (let i = 0; i < 4; i++) {
-        if (i === result.winnerCard) {
-            cards[i].debugg_text = "win";
-            cards[i].back = false;
-            cards[i].lose = false;
-            cards[i].win = true;
+    if(result.winnerCard === -1){
+        showLowCredit();
+    }
+    else{
+        for (let i = 0; i < 4; i++) {
+            if (i === result.winnerCard) {
+                cards[i].debugg_text = "win";
+                cards[i].back = false;
+                cards[i].lose = false;
+                cards[i].win = true;
+            }
+            else {
+                cards[i].debugg_text = "lose";
+                cards[i].back = false;
+                cards[i].lose = true;
+                cards[i].win = false;
+            }
+        }
+        if (result.isWinner) {
+            setOverlayText("Winner!");
+            setOverlayImage(true);
         }
         else {
-            cards[i].debugg_text = "lose";
-            cards[i].back = false;
-            cards[i].lose = true;
-            cards[i].win = false;
+            setOverlayText("Better Luck Next Time");
+            setOverlayImage(false);
         }
-    }
-    if (result.isWinner) {
-        setOverlayText("Winner!");
-        setOverlayImage(true);
-    }
-    else {
-        setOverlayText("Better Luck Next Time");
-        setOverlayImage(false);
     }
     socket.emit('credit', getKey(), function(balance){
       gsetcredit(balance);

@@ -44,7 +44,7 @@ function newUser(num, studentId, name){
         studentId: studentId,
         name: name,
         id: id,
-        balance: 50,
+        balance: 0,
         wins: 0,
         clicks: [0,0,0,0],
         clickwins: [0,0,0,0]

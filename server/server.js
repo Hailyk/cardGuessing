@@ -38,16 +38,25 @@ io.on('connection', (socket)=>{
     callback(data.getBalance(id));
   });
   
-  socket.on('choice', (id, guess, betAmount, callback)=>{
-    const winner = Math.floor(Math.random()*4);
-    data.incrementClicks(id, guess, (guess == winner) );
-    if (guess == winner){
-      data.updateBalance(id, data.getBalance(id)+betAmount*2);
-      data.incrementWins(id);
-    }
-    else data.updateBalance(id, data.getBalance(id)-betAmount);
+  socket.on('send data', ()=>{
     updateAdmin();
-    callback({winnerCard:winner, isWinner: (guess == winner)});
+  });
+  
+  socket.on('choice', (id, guess, betAmount, callback)=>{
+    if(data.getBalance(id) - betAmount < 0){
+      callback({winnerCard:-1, isWinner: false});
+    }
+    else{
+      const winner = Math.floor(Math.random()*4);
+      data.incrementClicks(id, guess, (guess == winner) );
+      if (guess == winner){
+        data.updateBalance(id, data.getBalance(id)+betAmount*2);
+        data.incrementWins(id);
+      }
+      else data.updateBalance(id, data.getBalance(id)-betAmount);
+      updateAdmin();
+      callback({winnerCard:winner, isWinner: (guess == winner)});
+    }
   });
   socket.on('set credit',(id,credit)=>{
     if(typeof credit !== 'number'){

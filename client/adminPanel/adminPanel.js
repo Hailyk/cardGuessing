@@ -1,5 +1,7 @@
 'use strict'
 
+let admin = false;
+
 const socket = io();
 
 socket.emit('get data');
@@ -12,7 +14,12 @@ Vue.component('cell', {
             if(typeof credit !== 'number'){
                 parseInt(credit);
             }
-            socket.emit('set credit', id, credit);
+            if(admin){
+                socket.emit('set credit', id, credit);
+            }
+            else{
+                socket.emit('send data');
+            }
         },
     }
 });
