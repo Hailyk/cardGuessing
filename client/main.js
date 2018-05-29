@@ -4,6 +4,8 @@ const socket = io(); //todo: fill in url
 
 let ready = true;
 
+let selected = -1;
+
 let cards = [];
 
 
@@ -35,6 +37,8 @@ let overlay = new Vue({
                 }
                 overlay.img = "";
                 setOverlay(false);
+                cards[selected] = false;
+                selected = -1;
             }
         },
     },
@@ -150,6 +154,7 @@ cards[0] = new Vue({
         win: false,
         lose:false,
         debug:false,
+        chosen: false,
     },
     methods:{
         card_click: card_click_constructor(0),
@@ -164,6 +169,7 @@ cards[1] = new Vue({
         win: false,
         lose:false,
         debug:false,
+        chosen: false,
     },
     methods:{
         card_click: card_click_constructor(1),
@@ -178,6 +184,7 @@ cards[2] = new Vue({
         win: false,
         lose:false,
         debug:false,
+        chosen: false,
     },
     methods:{
         card_click: card_click_constructor(2),
@@ -192,6 +199,7 @@ cards[3] = new Vue({
         win: false,
         lose:false,
         debug:false,
+        chosen: false,
     },
     methods:{
         card_click: card_click_constructor(3),
@@ -212,6 +220,7 @@ function card_click_constructor(cardNumber){
         console.log(cardNumber+" clicked");
         if(ready === true){
             ready = false;
+            cards[cardNumber].chosen = true;
             overlay_bet.cardClicked = cardNumber;
             overlay_bet.active = true;
         }

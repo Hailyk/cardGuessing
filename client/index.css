@@ -46,6 +46,10 @@ html, body{
     border-radius: 3%;
 }
 
+.mdl-shadow--2dp.selected_shadow{
+    box-shadow: 20px 20px 8px 0 rgba(0, 0, 0, 0.19), 12px 12px 4px -2px rgba(0, 0, 0, 0.24), 5px 5px 2px 0 rgba(0, 0, 0, 0.27);
+}
+
 .overlay.overlay_active{
     display: block;
 }

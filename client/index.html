@@ -55,28 +55,28 @@
             <div id="logged_in" v-on:click="logout">{{message}}</div>
             <div class="card-stack">
                 <!--card 1-->
-                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{backnaomi:back, win:win, lose:lose}" id="card1" v-on:click="card_click">
+                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{backnaomi:back, win:win, lose:lose, selected_shadow:chosen}" id="card1" v-on:click="card_click">
                     <div class="mdl-card__title mdl-card--expand"></div>
                     <div class="mdl-card__actions">
                         <span class="debug" v-bind:class="{debugActive:debug}">{{debug_text}}</span>
                     </div>
                 </div>
                 <!--card 2-->
-                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{backjiahao:back, win:win, lose:lose}" id="card2" v-on:click="card_click">
+                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{backjiahao:back, win:win, lose:lose, selected_shadow:chosen}" id="card2" v-on:click="card_click">
                     <div class="mdl-card__title mdl-card--expand"></div>
                     <div class="mdl-card__actions">
                         <span class="debug" v-bind:class="{debugActive:debug}">{{debug_text}}</span>
                     </div>
                 </div>
                 <!--card 3-->
-                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{backtwiness:back, win:win, lose:lose}" id="card3" v-on:click="card_click">
+                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{backtwiness:back, win:win, lose:lose, selected_shadow:chosen}" id="card3" v-on:click="card_click">
                     <div class="mdl-card__title mdl-card--expand"></div>
                     <div class="mdl-card__actions">
                         <span class="debug" v-bind:class="{debugActive:debug}">{{debug_text}}</span>
                     </div>
                 </div>
                 <!--card 4-->
-                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{backjonathan:back, win:win, lose:lose}" id="card4" v-on:click="card_click">
+                <div class="cards mdl-card mdl-shadow--2dp" v-bind:class="{backjonathan:back, win:win, lose:lose, selected_shadow:chosen}" id="card4" v-on:click="card_click">
                     <div class="mdl-card__title mdl-card--expand"></div>
                     <div class="mdl-card__actions">
                         <span class="debug" v-bind:class="{debugActive:debug}">{{debug_text}}</span>
