@@ -4,7 +4,7 @@ let admin = false;
 
 const socket = io();
 
-socket.emit('get data');
+socket.emit('send data');
 
 Vue.component('cell', {
     template: '#template',

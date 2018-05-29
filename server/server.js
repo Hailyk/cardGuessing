@@ -29,10 +29,6 @@ io.on('connection', (socket)=>{
     const name = data.identify(identifier, socket.id);
     callback(name);
   });
-  
-  socket.on('get data', ()=>{
-    updateAdmin();
-  });
 
   socket.on('credit', (id, callback)=>{
     callback(data.getBalance(id));
