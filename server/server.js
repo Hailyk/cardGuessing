@@ -54,12 +54,14 @@ io.on('connection', (socket)=>{
       callback({winnerCard:winner, isWinner: (guess == winner)});
     }
   });
-  socket.on('set credit',(id,credit)=>{
-    if(typeof credit !== 'number'){
-      credit = parseInt(credit);
+  socket.on('set credit',(adminPassword,id,credit)=>{
+    if(adminPassword === "!@#$SLUSD!@#$"){
+      if(typeof credit !== 'number'){
+        credit = parseInt(credit);
+      }
+      data.updateBalance(id,credit);
+      updateAdmin();
     }
-    data.updateBalance(id,credit);
-    updateAdmin();
   })
 });
 

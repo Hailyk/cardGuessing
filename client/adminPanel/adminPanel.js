@@ -1,6 +1,8 @@
 'use strict'
 
 let admin = false;
+let adminPassword = "";
+
 
 const socket = io();
 
@@ -15,7 +17,7 @@ Vue.component('cell', {
                 parseInt(credit);
             }
             if(admin){
-                socket.emit('set credit', id, credit);
+                socket.emit('set credit', adminPassword, id, credit);
             }
             else{
                 socket.emit('send data');
@@ -38,4 +40,9 @@ socket.on('send data', (data)=>{
 
 function updateCards(data){
     users.users = data;
+}
+
+function adminPanel(password){
+    adminPassword = password;
+    admin = true;
 }
