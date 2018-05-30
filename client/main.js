@@ -303,6 +303,7 @@ function sendBet(guess,betAmount){
 function onBet(result) {
     if(result.winnerCard == -1){
         toast("Not enough credit");
+        resetCard();
     }
     else{
         for (let i = 0; i < 4; i++) {
@@ -344,6 +345,16 @@ function onCredit(balance) {
     }
     else {
         throw new TypeError("Invalid event from server");
+    }
+}
+
+function resetCard(){
+    for (let i = 0; i < 4; i++) {
+        cards[i].debug_text = "back";
+        cards[i].back = true;
+        cards[i].lose = false;
+        cards[i].win = false;
+        cards[i].chosen = false;
     }
 }
 
