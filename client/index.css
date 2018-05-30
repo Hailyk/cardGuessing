@@ -100,7 +100,7 @@ img{
 
 .button{
   font-size: 22px;
-  width:240px;
+  width: calc( 100% - 30px);
   background-color: rgb(244,67,54);
   text-align: center;
   padding:10px;
