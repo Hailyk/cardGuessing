@@ -216,6 +216,10 @@ let credit = new Vue({
 
 identify();
 
+setInterval(()=>{
+    getCredit();
+}, 10000)
+
 function card_click_constructor(cardNumber){
     return ()=>{
         console.log(cardNumber+" clicked");
