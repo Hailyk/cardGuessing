@@ -146,3 +146,8 @@ img{
 .debug.debugActive{
     display: block;
 }
+
+#stats p{
+    float: left;
+    margin: 7px;
+}
